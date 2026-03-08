@@ -16,7 +16,7 @@ const QuizPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
-  const [gradeResults, setGradeResults] = useState<Record<string, { correct: boolean; correct_answer: string }>>({});
+  const [gradeResults, setGradeResults] = useState<Record<string, { correct: boolean }>>({});
 
   const { data: quiz, isLoading } = useQuery({
     queryKey: ["quiz", id],
@@ -42,14 +42,14 @@ const QuizPage = () => {
         _answers: answers,
       });
       if (error) throw error;
-      return data as { score: number; total: number; results: Array<{ question_id: string; correct: boolean; correct_answer: string }> };
+      return data as { score: number; total: number; results: Array<{ question_id: string; correct: boolean }> };
     },
     onSuccess: (data) => {
       setScore(data.score);
       setTotalQuestions(data.total);
-      const resultsMap: Record<string, { correct: boolean; correct_answer: string }> = {};
+      const resultsMap: Record<string, { correct: boolean }> = {};
       data.results.forEach((r) => {
-        resultsMap[r.question_id] = { correct: r.correct, correct_answer: r.correct_answer };
+        resultsMap[r.question_id] = { correct: r.correct };
       });
       setGradeResults(resultsMap);
       setSubmitted(true);
@@ -138,8 +138,8 @@ const QuizPage = () => {
                     const label = optionLabels[oi];
                     const displayLabel = displayLabels[oi];
                     const selected = answers[q.id] === label;
-                    const isCorrect = submitted && result?.correct_answer === label;
-                    const isWrong = submitted && selected && result?.correct_answer !== label;
+                    const isCorrect = submitted && selected && result?.correct;
+                    const isWrong = submitted && selected && !result?.correct;
                     return (
                       <button
                         key={key}
