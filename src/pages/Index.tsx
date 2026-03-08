@@ -41,7 +41,7 @@ const Landing = () => {
             </p>
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/signup">Start Learning Free</Link>
+                <Link to={user ? "/dashboard" : "/signup"}>{user ? "Go to Dashboard" : "Start Learning Free"}</Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
                 <Link to="/courses">Browse Courses</Link>
