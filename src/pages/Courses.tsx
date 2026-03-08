@@ -1,9 +1,10 @@
 import Layout from "@/components/Layout";
 import CourseCard from "@/components/CourseCard";
-import { seedCourses } from "@/data/courses";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Search } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const categories = ["All", "Quran Reading", "Tajweed", "Duas & Adhkar"];
 
@@ -11,7 +12,18 @@ const Courses = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const filtered = seedCourses.filter((c) => {
+  const { data: courses = [], isLoading } = useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const { data: coursesData, error } = await supabase
+        .from("courses")
+        .select("*, modules(id, title, lessons(id))");
+      if (error) throw error;
+      return coursesData || [];
+    },
+  });
+
+  const filtered = courses.filter((c: any) => {
     const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = activeCategory === "All" || c.category === activeCategory;
     return matchesSearch && matchesCategory;
@@ -52,20 +64,23 @@ const Courses = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((course) => (
-            <CourseCard
-              key={course.id}
-              id={course.id}
-              title={course.title}
-              description={course.description}
-              modules={course.modules.length}
-              students={course.students}
-              category={course.category}
-            />
-          ))}
-        </div>
-        {filtered.length === 0 && (
+        {isLoading ? (
+          <p className="py-12 text-center text-muted-foreground">Loading courses...</p>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((course: any) => (
+              <CourseCard
+                key={course.id}
+                id={course.id}
+                title={course.title}
+                description={course.description || ""}
+                modules={course.modules?.length || 0}
+                category={course.category || "Islamic Studies"}
+              />
+            ))}
+          </div>
+        )}
+        {!isLoading && filtered.length === 0 && (
           <p className="py-12 text-center text-muted-foreground">No courses found.</p>
         )}
       </div>
