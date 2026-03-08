@@ -1,12 +1,13 @@
 import Layout from "@/components/Layout";
 import CourseCard from "@/components/CourseCard";
-import { Award, BookOpen, TrendingUp } from "lucide-react";
+import { Award, BookOpen, TrendingUp, Video, ExternalLink } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const Dashboard = () => {
   const { user, profile, loading: authLoading } = useAuth();
@@ -52,6 +53,25 @@ const Dashboard = () => {
       return data || [];
     },
     enabled: !!user,
+  });
+
+  // Fetch enrolled course IDs for live class filtering
+  const enrolledCourseIds = enrollments.map((e: any) => e.courses?.id).filter(Boolean);
+
+  const { data: liveClasses = [] } = useQuery({
+    queryKey: ["my-live-classes", enrolledCourseIds],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("live_classes")
+        .select("*, courses(title)")
+        .in("course_id", enrolledCourseIds)
+        .gte("scheduled_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
+        .order("scheduled_at", { ascending: true })
+        .limit(5);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: enrolledCourseIds.length > 0,
   });
 
   if (authLoading) {
@@ -130,7 +150,49 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Enrolled Courses */}
+        {/* Upcoming Live Classes */}
+        {liveClasses.length > 0 && (
+          <div className="mb-10">
+            <h2 className="mb-4 text-xl font-semibold text-foreground">Upcoming Live Classes</h2>
+            <div className="space-y-3">
+              {liveClasses.map((lc: any) => {
+                const scheduled = new Date(lc.scheduled_at);
+                const now = new Date();
+                const isLive = scheduled <= now && scheduled.getTime() + (lc.duration_minutes || 60) * 60000 > now.getTime();
+                const isUpcoming = scheduled > now;
+                return (
+                  <div key={lc.id} className="flex items-center gap-4 rounded-xl border bg-card p-4 shadow-sm">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                      <Video className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-foreground truncate">{lc.title}</p>
+                        {isLive && <Badge variant="destructive" className="text-xs">Live Now</Badge>}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {lc.courses?.title} · {scheduled.toLocaleDateString()} at {scheduled.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                    {isLive && lc.meeting_url ? (
+                      <Button size="sm" asChild>
+                        <a href={lc.meeting_url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="mr-1.5 h-4 w-4" /> Join
+                        </a>
+                      </Button>
+                    ) : isUpcoming ? (
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        {scheduled.toLocaleDateString()}
+                      </span>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+
         <div>
           <h2 className="mb-4 text-xl font-semibold text-foreground">My Courses</h2>
           {coursesWithProgress.length === 0 ? (

@@ -1,7 +1,8 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
-import { BookOpen, Clock, ChevronRight, PlayCircle, FileText, Headphones, HelpCircle, CheckCircle2, Download } from "lucide-react";
+import { BookOpen, Clock, ChevronRight, PlayCircle, FileText, Headphones, HelpCircle, CheckCircle2, Download, Video, ExternalLink } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -77,6 +78,21 @@ const CourseDetail = () => {
         .select("id, title, file_url, description, created_at")
         .eq("course_id", id!)
         .order("created_at", { ascending: false });
+      return data || [];
+    },
+    enabled: !!id,
+  });
+
+  const { data: liveClasses = [] } = useQuery({
+    queryKey: ["course-live-classes", id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("live_classes")
+        .select("*")
+        .eq("course_id", id!)
+        .gte("scheduled_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
+        .order("scheduled_at", { ascending: true })
+        .limit(5);
       return data || [];
     },
     enabled: !!id,
@@ -243,6 +259,51 @@ const CourseDetail = () => {
           </div>
         </div>
       </section>
+      {/* Live Classes */}
+      {liveClasses.length > 0 && (
+        <section className="pb-12">
+          <div className="container mx-auto max-w-3xl px-4">
+            <h2 className="mb-6 text-2xl font-bold text-foreground">Live Classes</h2>
+            <div className="space-y-3">
+              {liveClasses.map((lc: any) => {
+                const scheduled = new Date(lc.scheduled_at);
+                const now = new Date();
+                const isLive = scheduled <= now && scheduled.getTime() + (lc.duration_minutes || 60) * 60000 > now.getTime();
+                return (
+                  <div key={lc.id} className="flex items-center gap-4 rounded-xl border bg-card p-4 shadow-sm">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                      <Video className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-foreground truncate">{lc.title}</p>
+                        {isLive && <Badge variant="destructive" className="text-xs">Live Now</Badge>}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {scheduled.toLocaleDateString()} at {scheduled.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {lc.duration_minutes && ` · ${lc.duration_minutes} min`}
+                      </p>
+                      {lc.description && <p className="text-sm text-muted-foreground mt-1">{lc.description}</p>}
+                    </div>
+                    {user && enrollment && isLive && lc.meeting_url ? (
+                      <Button size="sm" asChild>
+                        <a href={lc.meeting_url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="mr-1.5 h-4 w-4" /> Join
+                        </a>
+                      </Button>
+                    ) : user && enrollment && !isLive ? (
+                      <span className="text-xs text-muted-foreground">Upcoming</span>
+                    ) : !enrollment ? (
+                      <span className="text-xs text-muted-foreground">Enroll to join</span>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Study Resources */}
       {resources.length > 0 && (
         <section className="pb-12">
