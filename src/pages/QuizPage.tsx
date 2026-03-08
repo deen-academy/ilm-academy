@@ -42,14 +42,14 @@ const QuizPage = () => {
         _answers: answers,
       });
       if (error) throw error;
-      return data as { score: number; total: number; results: Array<{ question_id: string; correct: boolean; correct_answer: string }> };
+      return data as { score: number; total: number; results: Array<{ question_id: string; correct: boolean }> };
     },
     onSuccess: (data) => {
       setScore(data.score);
       setTotalQuestions(data.total);
-      const resultsMap: Record<string, { correct: boolean; correct_answer: string }> = {};
+      const resultsMap: Record<string, { correct: boolean }> = {};
       data.results.forEach((r) => {
-        resultsMap[r.question_id] = { correct: r.correct, correct_answer: r.correct_answer };
+        resultsMap[r.question_id] = { correct: r.correct };
       });
       setGradeResults(resultsMap);
       setSubmitted(true);
