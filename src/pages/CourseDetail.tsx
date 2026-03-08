@@ -120,6 +120,18 @@ const CourseDetail = () => {
               <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> {course.modules?.length || 0} modules</span>
               <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> {totalLessons} lessons</span>
             </div>
+            {user && enrollment && totalLessons > 0 && (
+              <div className="mt-6">
+                <div className="mb-2 flex items-center justify-between text-sm text-primary-foreground/80">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4" />
+                    {lessonProgress.length} of {totalLessons} lessons completed
+                  </span>
+                  <span className="font-semibold text-primary-foreground">{Math.round((lessonProgress.length / totalLessons) * 100)}%</span>
+                </div>
+                <Progress value={(lessonProgress.length / totalLessons) * 100} className="h-2.5 bg-primary-foreground/20 [&>div]:bg-primary-foreground" />
+              </div>
+            )}
             {user ? (
               enrollment ? (
                 <Button variant="accent" size="lg" className="mt-6" disabled>
