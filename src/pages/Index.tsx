@@ -79,15 +79,14 @@ const Landing = () => {
             <p className="text-muted-foreground">Start with our most popular courses designed for all levels</p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {seedCourses.map((course) => (
+            {courses.map((course: any) => (
               <CourseCard
                 key={course.id}
                 id={course.id}
                 title={course.title}
-                description={course.description}
-                modules={course.modules.length}
-                students={course.students}
-                category={course.category}
+                description={course.description || ""}
+                modules={course.modules?.length || 0}
+                category={course.category || "Islamic Studies"}
               />
             ))}
           </div>
