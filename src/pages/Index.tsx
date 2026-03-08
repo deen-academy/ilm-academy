@@ -7,6 +7,7 @@ import { BookOpen, GraduationCap, Star, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Landing = () => {
+  const { user } = useAuth();
   return (
     <Layout>
       {/* Hero */}
