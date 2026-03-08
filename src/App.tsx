@@ -38,9 +38,9 @@ const App = () => (
             <Route path="/lesson/:id" element={<LessonPage />} />
             <Route path="/quiz/:id" element={<QuizPage />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/create-course" element={<CreateCourse />} />
-            <Route path="/admin/upload-lesson" element={<UploadLesson />} />
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+            <Route path="/admin/create-course" element={<AdminRoute><CreateCourse /></AdminRoute>} />
+            <Route path="/admin/upload-lesson" element={<AdminRoute><UploadLesson /></AdminRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
