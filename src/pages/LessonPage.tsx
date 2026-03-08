@@ -1,30 +1,82 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { seedCourses } from "@/data/courses";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, PlayCircle } from "lucide-react";
-import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const LessonPage = () => {
   const { id } = useParams();
-  const [completed, setCompleted] = useState(false);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  // Find lesson across all courses
-  let foundLesson = null as any;
-  let foundCourse = null as any;
-  for (const course of seedCourses) {
-    for (const mod of course.modules) {
-      const lesson = mod.lessons.find((l) => l.id === id);
-      if (lesson) {
-        foundLesson = lesson;
-        foundCourse = course;
-        break;
+  // Fetch lesson with its module and course info
+  const { data: lesson, isLoading } = useQuery({
+    queryKey: ["lesson", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("lessons")
+        .select("*, modules(id, title, course_id, courses(id, title))")
+        .eq("id", id!)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+
+  // Fetch lesson progress
+  const { data: progress } = useQuery({
+    queryKey: ["lesson-progress", id, user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("lesson_progress")
+        .select("*")
+        .eq("lesson_id", id!)
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!id && !!user,
+  });
+
+  const completed = progress?.completed ?? false;
+
+  const toggleCompleteMutation = useMutation({
+    mutationFn: async () => {
+      if (progress) {
+        const { error } = await supabase
+          .from("lesson_progress")
+          .update({ completed: !completed, completed_at: !completed ? new Date().toISOString() : null })
+          .eq("id", progress.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("lesson_progress")
+          .insert({ lesson_id: id!, user_id: user!.id, completed: true, completed_at: new Date().toISOString() });
+        if (error) throw error;
       }
-    }
-    if (foundLesson) break;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lesson-progress", id] });
+      toast.success(completed ? "Marked as incomplete" : "Lesson completed! 🎉");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  if (isLoading) {
+    return (
+      <Layout showFooter={false}>
+        <div className="container mx-auto px-4 py-20 text-center">
+          <p className="text-muted-foreground">Loading lesson...</p>
+        </div>
+      </Layout>
+    );
   }
 
-  if (!foundLesson) {
+  if (!lesson) {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
@@ -37,15 +89,20 @@ const LessonPage = () => {
     );
   }
 
+  const course = (lesson as any).modules?.courses;
+  const courseId = (lesson as any).modules?.course_id;
+
   return (
     <Layout showFooter={false}>
       <div className="container mx-auto max-w-4xl px-4 py-8">
-        <Link to={`/courses/${foundCourse.id}`} className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-          <ArrowLeft className="h-4 w-4" /> Back to {foundCourse.title}
-        </Link>
+        {courseId && (
+          <Link to={`/courses/${courseId}`} className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+            <ArrowLeft className="h-4 w-4" /> Back to {course?.title || "Course"}
+          </Link>
+        )}
 
-        <h1 className="mb-2 text-2xl font-bold text-foreground">{foundLesson.title}</h1>
-        <p className="mb-8 text-sm text-muted-foreground">{foundLesson.duration} • {foundLesson.type}</p>
+        <h1 className="mb-2 text-2xl font-bold text-foreground">{lesson.title}</h1>
+        <p className="mb-8 text-sm text-muted-foreground">{lesson.duration} • {lesson.type}</p>
 
         {/* Video / Content placeholder */}
         <div className="mb-8 flex aspect-video items-center justify-center rounded-xl bg-muted">
@@ -63,26 +120,29 @@ const LessonPage = () => {
           <p className="mt-3 text-sm text-muted-foreground">In the name of Allah, the Most Gracious, the Most Merciful</p>
         </div>
 
-        {/* Lesson explanation */}
-        <div className="mb-8">
-          <h2 className="mb-3 text-lg font-semibold text-foreground">Lesson Notes</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            This lesson covers the fundamentals. Watch the video above, listen to the recitation, and practise repeating. Once you feel confident, mark the lesson as complete and move to the next one.
-          </p>
-        </div>
+        {/* Lesson content */}
+        {lesson.content && (
+          <div className="mb-8">
+            <h2 className="mb-3 text-lg font-semibold text-foreground">Lesson Notes</h2>
+            <p className="text-muted-foreground leading-relaxed">{lesson.content}</p>
+          </div>
+        )}
 
-        <Button
-          variant={completed ? "outline" : "hero"}
-          size="lg"
-          className="w-full sm:w-auto"
-          onClick={() => setCompleted(!completed)}
-        >
-          {completed ? (
-            <><CheckCircle2 className="mr-2 h-5 w-5" /> Completed</>
-          ) : (
-            "Mark as Complete"
-          )}
-        </Button>
+        {user && (
+          <Button
+            variant={completed ? "outline" : "hero"}
+            size="lg"
+            className="w-full sm:w-auto"
+            onClick={() => toggleCompleteMutation.mutate()}
+            disabled={toggleCompleteMutation.isPending}
+          >
+            {completed ? (
+              <><CheckCircle2 className="mr-2 h-5 w-5" /> Completed</>
+            ) : (
+              "Mark as Complete"
+            )}
+          </Button>
+        )}
       </div>
     </Layout>
   );
