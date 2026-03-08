@@ -180,7 +180,7 @@ const QuizPage = () => {
           <Button
             variant="hero"
             size="lg"
-            className="mt-8 w-full"
+            className="mt-8 w-full touch-target"
             disabled={Object.keys(answers).length < questions.length || gradeMutation.isPending}
             onClick={handleSubmit}
           >

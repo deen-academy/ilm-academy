@@ -158,7 +158,7 @@ const LessonPage = () => {
           <Button
             variant={completed ? "outline" : "hero"}
             size="lg"
-            className="w-full sm:w-auto"
+            className="w-full touch-target"
             onClick={() => toggleCompleteMutation.mutate()}
             disabled={toggleCompleteMutation.isPending}
           >
