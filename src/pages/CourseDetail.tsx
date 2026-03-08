@@ -161,6 +161,19 @@ const CourseDetail = () => {
                       </li>
                     );
                   })}
+                  {mod.quizzes?.map((quiz: any) => (
+                    <li key={quiz.id}>
+                      <Link
+                        to={`/quiz/${quiz.id}`}
+                        className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-muted/50 bg-accent/30"
+                      >
+                        <HelpCircle className="h-4 w-4 text-accent-foreground" />
+                        <span className="flex-1 font-medium text-foreground">{quiz.title}</span>
+                        <span className="text-xs font-medium text-primary">Take Quiz</span>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             ))}
