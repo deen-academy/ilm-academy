@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface AuthContextType {
@@ -30,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<{ name: string | null; email: string | null } | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
 
-  const fetchUserData = async (userId: string) => {
+  const fetchUserData = useCallback(async (userId: string) => {
     try {
       const [profileRes, rolesRes] = await Promise.all([
         supabase.from("profiles").select("name, email").eq("id", userId).single(),
@@ -43,12 +42,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setProfile(null);
       setRoles([]);
     }
-  };
+  }, []);
 
   useEffect(() => {
     let mounted = true;
 
-    // First get the current session
+    // 1. Restore session from storage — this is the source of truth for initial load
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!mounted) return;
       setSession(session);
@@ -59,25 +58,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (mounted) setLoading(false);
     });
 
-    // Then listen for auth changes (sign in, sign out, token refresh)
+    // 2. Listen for subsequent auth changes only (sign-in, sign-out, token refresh)
+    //    IMPORTANT: No async/await here — Supabase does not await this callback
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (!mounted) return;
         setSession(session);
         setUser(session?.user ?? null);
-        if (session?.user) {
-          // Use setTimeout to avoid Supabase auth deadlock
-          setTimeout(() => {
-            if (mounted) {
-              fetchUserData(session.user.id).finally(() => {
-                if (mounted) setLoading(false);
-              });
-            }
-          }, 0);
-        } else {
+        if (!session?.user) {
           setProfile(null);
           setRoles([]);
-          setLoading(false);
         }
       }
     );
@@ -86,7 +76,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchUserData]);
+
+  // 3. Fetch user data reactively when user changes (handles sign-in/sign-out after initial load)
+  useEffect(() => {
+    if (loading) return; // Skip during initial load — getSession handles that
+    if (user) {
+      fetchUserData(user.id);
+    } else {
+      setProfile(null);
+      setRoles([]);
+    }
+  }, [user, loading, fetchUserData]);
 
   const signUp = async (email: string, password: string, name: string) => {
     const { error } = await supabase.auth.signUp({
