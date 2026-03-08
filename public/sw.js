@@ -1,5 +1,5 @@
-const CACHE_NAME = 'deen-academy-v1';
-const PRECACHE_URLS = ['/', '/index.html'];
+const CACHE_NAME = 'deen-academy-v2';
+const PRECACHE_URLS = ['/', '/index.html', '/offline.html', '/app-icon.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -19,6 +19,22 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // For navigation requests, show offline page on failure
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match('/offline.html'))
+    );
+    return;
+  }
+
+  // For other requests, network-first with cache fallback
   event.respondWith(
     fetch(event.request)
       .then((response) => {
