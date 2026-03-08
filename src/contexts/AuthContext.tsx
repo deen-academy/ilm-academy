@@ -31,32 +31,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [roles, setRoles] = useState<string[]>([]);
 
   const fetchUserData = async (userId: string) => {
-    const [profileRes, rolesRes] = await Promise.all([
-      supabase.from("profiles").select("name, email").eq("id", userId).single(),
-      supabase.from("user_roles").select("role").eq("user_id", userId),
-    ]);
-    setProfile(profileRes.data);
-    setRoles(rolesRes.data?.map((r) => r.role) || []);
+    try {
+      const [profileRes, rolesRes] = await Promise.all([
+        supabase.from("profiles").select("name, email").eq("id", userId).single(),
+        supabase.from("user_roles").select("role").eq("user_id", userId),
+      ]);
+      setProfile(profileRes.data);
+      setRoles(rolesRes.data?.map((r) => r.role) || []);
+    } catch (err) {
+      console.error("Failed to fetch user data:", err);
+      setProfile(null);
+      setRoles([]);
+    }
   };
 
   useEffect(() => {
     let mounted = true;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (!mounted) return;
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchUserData(session.user.id);
-        } else {
-          setProfile(null);
-          setRoles([]);
-        }
-        setLoading(false);
-      }
-    );
-
+    // First get the current session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!mounted) return;
       setSession(session);
@@ -64,8 +56,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (session?.user) {
         await fetchUserData(session.user.id);
       }
-      setLoading(false);
+      if (mounted) setLoading(false);
     });
+
+    // Then listen for auth changes (sign in, sign out, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!mounted) return;
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          // Use setTimeout to avoid Supabase auth deadlock
+          setTimeout(() => {
+            if (mounted) {
+              fetchUserData(session.user.id).finally(() => {
+                if (mounted) setLoading(false);
+              });
+            }
+          }, 0);
+        } else {
+          setProfile(null);
+          setRoles([]);
+          setLoading(false);
+        }
+      }
+    );
 
     return () => {
       mounted = false;
