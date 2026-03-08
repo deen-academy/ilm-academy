@@ -24,6 +24,11 @@ import AdminResources from "./pages/admin/Resources";
 import AdminLiveClasses from "./pages/admin/LiveClasses";
 import AdminAnalytics from "./pages/admin/Analytics";
 import AdminRoute from "@/components/AdminRoute";
+import TeacherRoute from "@/components/TeacherRoute";
+import TeacherDashboard from "./pages/teacher/TeacherDashboard";
+import TeacherCourses from "./pages/teacher/TeacherCourses";
+import TeacherResources from "./pages/teacher/TeacherResources";
+import TeacherLiveClasses from "./pages/teacher/TeacherLiveClasses";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +58,10 @@ const App = () => (
             <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
             <Route path="/admin/create-course" element={<AdminRoute><CreateCourse /></AdminRoute>} />
             <Route path="/admin/upload-lesson" element={<AdminRoute><UploadLesson /></AdminRoute>} />
+            <Route path="/teacher" element={<TeacherRoute><TeacherDashboard /></TeacherRoute>} />
+            <Route path="/teacher/courses" element={<TeacherRoute><TeacherCourses /></TeacherRoute>} />
+            <Route path="/teacher/resources" element={<TeacherRoute><TeacherResources /></TeacherRoute>} />
+            <Route path="/teacher/live-classes" element={<TeacherRoute><TeacherLiveClasses /></TeacherRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
