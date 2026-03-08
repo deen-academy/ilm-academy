@@ -124,7 +124,7 @@ const LessonPage = () => {
         {lesson.content && (
           <div className="mb-8">
             <h2 className="mb-3 text-lg font-semibold text-foreground">Lesson Notes</h2>
-            <p className="text-muted-foreground leading-relaxed">{lesson.content}</p>
+            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{lesson.content}</p>
           </div>
         )}
 
