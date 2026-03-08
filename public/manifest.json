@@ -1,0 +1,18 @@
+{
+  "name": "Deen Academy",
+  "short_name": "Deen Academy",
+  "description": "A modern Islamic learning platform for Quran reading, Tajweed, Duas, and foundational Islamic studies.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f766e",
+  "theme_color": "#0f766e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
