@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
-import { BookOpen, Clock, ChevronRight, PlayCircle, FileText, Headphones, HelpCircle, CheckCircle2 } from "lucide-react";
+import { BookOpen, Clock, ChevronRight, PlayCircle, FileText, Headphones, HelpCircle, CheckCircle2, Download } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -67,6 +67,19 @@ const CourseDetail = () => {
       return data || [];
     },
     enabled: !!user && !!enrollment && allLessonIds.length > 0,
+  });
+
+  const { data: resources = [] } = useQuery({
+    queryKey: ["course-resources", id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("study_resources")
+        .select("id, title, file_url, description, created_at")
+        .eq("course_id", id!)
+        .order("created_at", { ascending: false });
+      return data || [];
+    },
+    enabled: !!id,
   });
 
   const completedLessonIds = new Set(lessonProgress.map((p: any) => p.lesson_id));
@@ -230,6 +243,42 @@ const CourseDetail = () => {
           </div>
         </div>
       </section>
+      {/* Study Resources */}
+      {resources.length > 0 && (
+        <section className="pb-12">
+          <div className="container mx-auto max-w-3xl px-4">
+            <h2 className="mb-6 text-2xl font-bold text-foreground">Study Resources</h2>
+            <div className="rounded-xl border bg-card shadow-card overflow-hidden divide-y">
+              {resources.map((res: any) => (
+                <div key={res.id} className="flex items-center gap-4 px-5 py-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <FileText className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-foreground truncate">{res.title}</p>
+                    {res.description && (
+                      <p className="text-sm text-muted-foreground truncate">{res.description}</p>
+                    )}
+                  </div>
+                  {user && enrollment && res.file_url ? (
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={res.file_url} target="_blank" rel="noopener noreferrer" download>
+                        <Download className="mr-1.5 h-4 w-4" /> Download
+                      </a>
+                    </Button>
+                  ) : !user ? (
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/login">Log in to download</Link>
+                    </Button>
+                  ) : !enrollment ? (
+                    <span className="text-xs text-muted-foreground">Enroll to access</span>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </Layout>
   );
 };
