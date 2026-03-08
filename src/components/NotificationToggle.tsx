@@ -1,9 +1,10 @@
+import { forwardRef } from "react";
 import { Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useAuth } from "@/contexts/AuthContext";
 
-export const NotificationToggle = () => {
+export const NotificationToggle = forwardRef<HTMLButtonElement>((_, ref) => {
   const { user } = useAuth();
   const { isSupported, isSubscribed, loading, subscribe, unsubscribe } =
     usePushNotifications();
@@ -12,6 +13,7 @@ export const NotificationToggle = () => {
 
   return (
     <Button
+      ref={ref}
       variant="ghost"
       size="icon"
       onClick={isSubscribed ? unsubscribe : subscribe}
@@ -26,4 +28,6 @@ export const NotificationToggle = () => {
       )}
     </Button>
   );
-};
+});
+
+NotificationToggle.displayName = "NotificationToggle";
