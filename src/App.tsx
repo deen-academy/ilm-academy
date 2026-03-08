@@ -25,6 +25,7 @@ import AdminLiveClasses from "./pages/admin/LiveClasses";
 import AdminAnalytics from "./pages/admin/Analytics";
 import AdminRoute from "@/components/AdminRoute";
 import TeacherRoute from "@/components/TeacherRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import TeacherCourses from "./pages/teacher/TeacherCourses";
 import TeacherResources from "./pages/teacher/TeacherResources";
@@ -43,12 +44,12 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:id" element={<CourseDetail />} />
-            <Route path="/lesson/:id" element={<LessonPage />} />
-            <Route path="/quiz/:id" element={<QuizPage />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/lesson/:id" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
+            <Route path="/quiz/:id" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/students" element={<AdminRoute><AdminStudents /></AdminRoute>} />
             <Route path="/admin/teachers" element={<AdminRoute><AdminTeachers /></AdminRoute>} />
