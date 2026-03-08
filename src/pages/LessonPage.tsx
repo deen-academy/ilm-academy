@@ -110,11 +110,49 @@ const LessonPage = () => {
           </div>
         )}
 
-        {/* Content */}
+        {/* Content with Arabic text rendering */}
         {lesson.content && (
-          <div className="mb-8">
-            <h2 className="mb-3 text-lg font-semibold text-foreground">Lesson Notes</h2>
-            <p className="text-muted-foreground leading-relaxed">{lesson.content}</p>
+          <div className="mb-8 space-y-6">
+            {lesson.content.split('\n\n').map((block: string, i: number) => {
+              // Check if block contains Arabic characters
+              const hasArabic = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(block);
+              const lines = block.split('\n');
+              
+              if (hasArabic && lines.length >= 2) {
+                // Render as Arabic card with translation
+                const arabicLine = lines.find(l => /[\u0600-\u06FF]/.test(l));
+                const translationLine = lines.find(l => !/[\u0600-\u06FF]/.test(l) && l.trim());
+                
+                return (
+                  <div key={i} className="rounded-xl border bg-card p-6 text-center shadow-card">
+                    <p className="font-arabic text-2xl leading-loose text-foreground md:text-3xl" dir="rtl">
+                      {arabicLine}
+                    </p>
+                    {translationLine && (
+                      <p className="mt-3 text-sm text-muted-foreground">{translationLine}</p>
+                    )}
+                  </div>
+                );
+              }
+              
+              if (hasArabic) {
+                // Inline Arabic with pronunciation
+                return (
+                  <div key={i} className="rounded-xl border bg-card p-6 text-center shadow-card">
+                    <p className="font-arabic text-xl leading-loose text-foreground md:text-2xl" dir="rtl">
+                      {block}
+                    </p>
+                  </div>
+                );
+              }
+              
+              // Regular text
+              return (
+                <div key={i}>
+                  <p className="text-muted-foreground leading-relaxed">{block}</p>
+                </div>
+              );
+            })}
           </div>
         )}
 
