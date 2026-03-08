@@ -153,7 +153,7 @@ const QuizPage = () => {
                         key={key}
                         disabled={submitted}
                         onClick={() => setAnswers({ ...answers, [q.id]: label })}
-                        className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors text-left ${
+                        className={`flex w-full items-center gap-3 rounded-lg border px-4 py-4 sm:py-3 text-sm transition-colors text-left touch-target ${
                           selected && !submitted ? "border-primary bg-primary/5" : ""
                         } ${isCorrect ? "border-green-500 bg-green-50" : ""} ${
                           isWrong ? "border-destructive bg-destructive/5" : ""
