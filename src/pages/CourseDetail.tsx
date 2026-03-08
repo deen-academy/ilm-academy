@@ -23,7 +23,7 @@ const CourseDetail = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")
-        .select("*, modules(*, lessons(*) )")
+        .select("*, modules(*, lessons(*), quizzes(id, title) )")
         .eq("id", id!)
         .single();
       if (error) throw error;
