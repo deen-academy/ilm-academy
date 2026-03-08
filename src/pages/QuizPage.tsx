@@ -85,7 +85,8 @@ const QuizPage = () => {
   }
 
   const optionKeys = ["option_a", "option_b", "option_c", "option_d"] as const;
-  const optionLabels = ["A", "B", "C", "D"];
+  const optionLabels = ["a", "b", "c", "d"];
+  const displayLabels = ["A", "B", "C", "D"];
 
   return (
     <Layout showFooter={false}>
