@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateCourse from "./pages/CreateCourse";
 import UploadLesson from "./pages/UploadLesson";
+import AdminRoute from "@/components/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -37,9 +38,9 @@ const App = () => (
             <Route path="/lesson/:id" element={<LessonPage />} />
             <Route path="/quiz/:id" element={<QuizPage />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/create-course" element={<CreateCourse />} />
-            <Route path="/admin/upload-lesson" element={<UploadLesson />} />
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+            <Route path="/admin/create-course" element={<AdminRoute><CreateCourse /></AdminRoute>} />
+            <Route path="/admin/upload-lesson" element={<AdminRoute><UploadLesson /></AdminRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
