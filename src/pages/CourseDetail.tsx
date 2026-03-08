@@ -26,7 +26,7 @@ const CourseDetail = () => {
         .from("courses")
         .select("*, modules(*, lessons(*), quizzes(id, title) )")
         .eq("id", id!)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       // Sort modules and lessons by order_number
       if (data?.modules) {
