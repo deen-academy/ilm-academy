@@ -204,7 +204,7 @@ const CourseDetail = () => {
                           ) : (
                             <Icon className="h-4 w-4 text-primary" />
                           )}
-                          <span className={`flex-1 ${isCompleted ? "text-muted-foreground line-through" : "text-foreground"}`}>{lesson.title}</span>
+                          <span className={`flex-1 ${isCompleted ? "text-muted-foreground" : "text-foreground"}`}>{lesson.title}</span>
                           {lesson.duration && <span className="text-xs text-muted-foreground">{lesson.duration}</span>}
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         </Link>
