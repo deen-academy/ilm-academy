@@ -96,6 +96,9 @@ const CourseDetail = () => {
       <section className="gradient-primary">
         <div className="container mx-auto px-4 py-12 md:py-16">
           <div className="mx-auto max-w-3xl">
+            <Link to="/courses" className="mb-4 inline-flex items-center gap-2 text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+              <ArrowLeft className="h-4 w-4" /> Back to Courses
+            </Link>
             <span className="mb-3 inline-block rounded-full bg-primary-foreground/20 px-3 py-1 text-xs font-medium text-primary-foreground">
               {course.category}
             </span>

@@ -89,6 +89,9 @@ const QuizPage = () => {
   return (
     <Layout showFooter={false}>
       <div className="container mx-auto max-w-2xl px-4 py-10">
+        <button onClick={() => window.history.back()} className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+          <ArrowLeft className="h-4 w-4" /> Back
+        </button>
         <h1 className="mb-2 text-2xl font-bold text-foreground">{quiz.title}</h1>
         <p className="mb-8 text-sm text-muted-foreground">Test your knowledge from this module</p>
 
