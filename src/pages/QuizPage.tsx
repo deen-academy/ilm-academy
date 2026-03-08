@@ -16,7 +16,7 @@ const QuizPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
-  const [gradeResults, setGradeResults] = useState<Record<string, { correct: boolean; correct_answer: string }>>({});
+  const [gradeResults, setGradeResults] = useState<Record<string, { correct: boolean }>>({});
 
   const { data: quiz, isLoading } = useQuery({
     queryKey: ["quiz", id],
