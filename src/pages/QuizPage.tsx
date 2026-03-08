@@ -100,7 +100,7 @@ const QuizPage = () => {
 
   return (
     <Layout showFooter={false}>
-      <div className="container mx-auto max-w-2xl px-4 py-10">
+      <div className="container mx-auto max-w-2xl px-3 py-4 sm:px-4 sm:py-10">
         <div className="mb-6">
           <Breadcrumb>
             <BreadcrumbList>
@@ -153,7 +153,7 @@ const QuizPage = () => {
                         key={key}
                         disabled={submitted}
                         onClick={() => setAnswers({ ...answers, [q.id]: label })}
-                        className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors text-left ${
+                        className={`flex w-full items-center gap-3 rounded-lg border px-4 py-4 sm:py-3 text-sm transition-colors text-left touch-target ${
                           selected && !submitted ? "border-primary bg-primary/5" : ""
                         } ${isCorrect ? "border-green-500 bg-green-50" : ""} ${
                           isWrong ? "border-destructive bg-destructive/5" : ""
@@ -180,7 +180,7 @@ const QuizPage = () => {
           <Button
             variant="hero"
             size="lg"
-            className="mt-8 w-full"
+            className="mt-8 w-full touch-target"
             disabled={Object.keys(answers).length < questions.length || gradeMutation.isPending}
             onClick={handleSubmit}
           >

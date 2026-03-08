@@ -96,7 +96,7 @@ const LessonPage = () => {
 
   return (
     <Layout showFooter={false}>
-      <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div className="container mx-auto max-w-4xl px-3 py-4 sm:px-4 sm:py-8">
         <div className="mb-6">
           <Breadcrumb>
             <BreadcrumbList>
@@ -127,8 +127,8 @@ const LessonPage = () => {
           </Breadcrumb>
         </div>
 
-        <h1 className="mb-2 text-2xl font-bold text-foreground">{lesson.title}</h1>
-        <p className="mb-8 text-sm text-muted-foreground">{lesson.duration} • {lesson.type}</p>
+        <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">{lesson.title}</h1>
+        <p className="mb-6 sm:mb-8 text-sm text-muted-foreground">{lesson.duration} • {lesson.type}</p>
 
         {/* Video / Content placeholder */}
         <div className="mb-8 flex aspect-video items-center justify-center rounded-xl bg-muted">
@@ -158,7 +158,7 @@ const LessonPage = () => {
           <Button
             variant={completed ? "outline" : "hero"}
             size="lg"
-            className="w-full sm:w-auto"
+            className="w-full touch-target"
             onClick={() => toggleCompleteMutation.mutate()}
             disabled={toggleCompleteMutation.isPending}
           >
