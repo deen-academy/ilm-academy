@@ -1,13 +1,25 @@
 import Layout from "@/components/Layout";
 import CourseCard from "@/components/CourseCard";
 import { Button } from "@/components/ui/button";
-import { seedCourses } from "@/data/courses";
 import { Link } from "react-router-dom";
 import { BookOpen, GraduationCap, Star, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Landing = () => {
   const { user } = useAuth();
+  const { data: courses = [] } = useQuery({
+    queryKey: ["courses-featured"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("courses")
+        .select("*, modules(id)")
+        .limit(3);
+      if (error) throw error;
+      return data || [];
+    },
+  });
   return (
     <Layout>
       {/* Hero */}
@@ -67,15 +79,14 @@ const Landing = () => {
             <p className="text-muted-foreground">Start with our most popular courses designed for all levels</p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {seedCourses.map((course) => (
+            {courses.map((course: any) => (
               <CourseCard
                 key={course.id}
                 id={course.id}
                 title={course.title}
-                description={course.description}
-                modules={course.modules.length}
-                students={course.students}
-                category={course.category}
+                description={course.description || ""}
+                modules={course.modules?.length || 0}
+                category={course.category || "Islamic Studies"}
               />
             ))}
           </div>
