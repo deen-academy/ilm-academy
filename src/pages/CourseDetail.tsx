@@ -69,6 +69,19 @@ const CourseDetail = () => {
     enabled: !!user && !!enrollment && allLessonIds.length > 0,
   });
 
+  const { data: resources = [] } = useQuery({
+    queryKey: ["course-resources", id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("study_resources")
+        .select("id, title, file_url, description, created_at")
+        .eq("course_id", id!)
+        .order("created_at", { ascending: false });
+      return data || [];
+    },
+    enabled: !!id,
+  });
+
   const completedLessonIds = new Set(lessonProgress.map((p: any) => p.lesson_id));
 
   const enrollMutation = useMutation({
