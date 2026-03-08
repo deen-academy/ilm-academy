@@ -1,49 +1,70 @@
-import Layout from "@/components/Layout";
+import AdminLayout from "@/components/AdminLayout";
 import { Link } from "react-router-dom";
-import { Users, BookOpen, GraduationCap, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Users, BookOpen, GraduationCap, FileText, Video, BarChart3 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const AdminDashboard = () => (
-  <Layout>
-    <div className="container mx-auto px-4 py-10">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage courses, lessons, and students</p>
-        </div>
-        <Button variant="hero" asChild>
-          <Link to="/admin/create-course"><Plus className="mr-2 h-4 w-4" /> New Course</Link>
-        </Button>
-      </div>
+const AdminDashboard = () => {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: async () => {
+      const [courses, students, teachers, lessons, resources, liveClasses] = await Promise.all([
+        supabase.from("courses").select("id", { count: "exact", head: true }),
+        supabase.from("user_roles").select("id", { count: "exact", head: true }).eq("role", "student"),
+        supabase.from("user_roles").select("id", { count: "exact", head: true }).eq("role", "teacher"),
+        supabase.from("lessons").select("id", { count: "exact", head: true }),
+        supabase.from("study_resources").select("id", { count: "exact", head: true }),
+        supabase.from("live_classes").select("id", { count: "exact", head: true }),
+      ]);
+      return {
+        courses: courses.count ?? 0,
+        students: students.count ?? 0,
+        teachers: teachers.count ?? 0,
+        lessons: lessons.count ?? 0,
+        resources: resources.count ?? 0,
+        liveClasses: liveClasses.count ?? 0,
+      };
+    },
+  });
 
-      <div className="grid gap-4 sm:grid-cols-3 mb-10">
-        {[
-          { icon: BookOpen, label: "Total Courses", value: "3" },
-          { icon: Users, label: "Total Students", value: "733" },
-          { icon: GraduationCap, label: "Total Lessons", value: "24" },
-        ].map((stat) => (
-          <div key={stat.label} className="flex items-center gap-4 rounded-xl border bg-card p-5 shadow-card">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
-              <stat.icon className="h-6 w-6 text-accent" />
+  const cards = [
+    { icon: BookOpen, label: "Courses", value: stats?.courses, to: "/admin/courses", color: "bg-primary/10 text-primary" },
+    { icon: Users, label: "Students", value: stats?.students, to: "/admin/students", color: "bg-accent/15 text-accent-foreground" },
+    { icon: GraduationCap, label: "Teachers", value: stats?.teachers, to: "/admin/teachers", color: "bg-primary/10 text-primary" },
+    { icon: FileText, label: "Resources", value: stats?.resources, to: "/admin/resources", color: "bg-accent/15 text-accent-foreground" },
+    { icon: Video, label: "Live Classes", value: stats?.liveClasses, to: "/admin/live-classes", color: "bg-primary/10 text-primary" },
+    { icon: BarChart3, label: "Total Lessons", value: stats?.lessons, to: "/admin/analytics", color: "bg-accent/15 text-accent-foreground" },
+  ];
+
+  return (
+    <AdminLayout>
+      <h1 className="text-3xl font-bold text-foreground mb-1">Dashboard</h1>
+      <p className="text-muted-foreground mb-8">Platform overview and quick stats</p>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {cards.map((c) => (
+          <Link
+            key={c.label}
+            to={c.to}
+            className="flex items-center gap-4 rounded-xl border bg-card p-5 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.color}`}>
+              <c.icon className="h-6 w-6" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+              {isLoading ? (
+                <Skeleton className="h-7 w-12 mb-1" />
+              ) : (
+                <div className="text-2xl font-bold text-foreground">{c.value}</div>
+              )}
+              <div className="text-sm text-muted-foreground">{c.label}</div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
-
-      <div className="rounded-xl border bg-card p-6 shadow-card">
-        <h2 className="mb-4 text-lg font-semibold text-foreground">Quick Actions</h2>
-        <div className="flex flex-wrap gap-3">
-          <Button variant="outline" asChild><Link to="/admin/create-course">Create Course</Link></Button>
-          <Button variant="outline" asChild><Link to="/admin/upload-lesson">Upload Lesson</Link></Button>
-          <Button variant="outline" asChild><Link to="/courses">View Courses</Link></Button>
-        </div>
-      </div>
-    </div>
-  </Layout>
-);
+    </AdminLayout>
+  );
+};
 
 export default AdminDashboard;
