@@ -9,6 +9,17 @@ import { supabase } from "@/integrations/supabase/client";
 
 const Landing = () => {
   const { user } = useAuth();
+  const { data: courses = [] } = useQuery({
+    queryKey: ["courses-featured"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("courses")
+        .select("*, modules(id)")
+        .limit(3);
+      if (error) throw error;
+      return data || [];
+    },
+  });
   return (
     <Layout>
       {/* Hero */}
