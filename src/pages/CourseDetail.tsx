@@ -53,6 +53,22 @@ const CourseDetail = () => {
     enabled: !!id && !!user,
   });
 
+  const allLessonIds = course?.modules?.flatMap((m: any) => m.lessons?.map((l: any) => l.id) || []) || [];
+
+  const { data: lessonProgress = [] } = useQuery({
+    queryKey: ["course-progress", id, user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("lesson_progress")
+        .select("lesson_id, completed")
+        .eq("user_id", user!.id)
+        .in("lesson_id", allLessonIds)
+        .eq("completed", true);
+      return data || [];
+    },
+    enabled: !!user && !!enrollment && allLessonIds.length > 0,
+  });
+
   const enrollMutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
