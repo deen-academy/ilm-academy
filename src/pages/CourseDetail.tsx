@@ -54,6 +54,7 @@ const CourseDetail = () => {
   });
 
   const allLessonIds = course?.modules?.flatMap((m: any) => m.lessons?.map((l: any) => l.id) || []) || [];
+  const completedLessonIds = new Set(lessonProgress.map((p: any) => p.lesson_id));
 
   const { data: lessonProgress = [] } = useQuery({
     queryKey: ["course-progress", id, user?.id],
