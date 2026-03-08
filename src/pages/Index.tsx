@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { seedCourses } from "@/data/courses";
 import { Link } from "react-router-dom";
 import { BookOpen, GraduationCap, Star, Users } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Landing = () => {
+  const { user } = useAuth();
   return (
     <Layout>
       {/* Hero */}
@@ -109,13 +111,27 @@ const Landing = () => {
       <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="rounded-2xl gradient-primary px-6 py-12 text-center md:px-16">
-            <h2 className="mb-4 text-3xl font-bold text-primary-foreground">Ready to Begin?</h2>
-            <p className="mb-6 text-primary-foreground/80">
-              Join hundreds of students on their journey to understanding Islam.
-            </p>
-            <Button variant="accent" size="lg" asChild>
-              <Link to="/signup">Create Free Account</Link>
-            </Button>
+            {user ? (
+              <>
+                <h2 className="mb-4 text-3xl font-bold text-primary-foreground">Continue Your Journey</h2>
+                <p className="mb-6 text-primary-foreground/80">
+                  Head to your dashboard to pick up where you left off.
+                </p>
+                <Button variant="accent" size="lg" asChild>
+                  <Link to="/dashboard">Go to Dashboard</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <h2 className="mb-4 text-3xl font-bold text-primary-foreground">Ready to Begin?</h2>
+                <p className="mb-6 text-primary-foreground/80">
+                  Join hundreds of students on their journey to understanding Islam.
+                </p>
+                <Button variant="accent" size="lg" asChild>
+                  <Link to="/signup">Create Free Account</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>
