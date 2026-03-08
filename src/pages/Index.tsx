@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { seedCourses } from "@/data/courses";
 import { Link } from "react-router-dom";
 import { BookOpen, GraduationCap, Star, Users } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Landing = () => {
   return (
