@@ -1,10 +1,11 @@
 import Layout from "@/components/Layout";
 import CourseCard from "@/components/CourseCard";
 import { Button } from "@/components/ui/button";
-import { seedCourses } from "@/data/courses";
 import { Link } from "react-router-dom";
 import { BookOpen, GraduationCap, Star, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Landing = () => {
   const { user } = useAuth();
