@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
-import { BookOpen, Clock, ChevronRight, Users, PlayCircle, FileText, Headphones, HelpCircle } from "lucide-react";
+import { BookOpen, Clock, ChevronRight, Users, PlayCircle, FileText, Headphones, HelpCircle, ArrowLeft } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
