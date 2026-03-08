@@ -55,6 +55,25 @@ const Dashboard = () => {
     enabled: !!user,
   });
 
+  // Fetch enrolled course IDs for live class filtering
+  const enrolledCourseIds = enrollments.map((e: any) => e.courses?.id).filter(Boolean);
+
+  const { data: liveClasses = [] } = useQuery({
+    queryKey: ["my-live-classes", enrolledCourseIds],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("live_classes")
+        .select("*, courses(title)")
+        .in("course_id", enrolledCourseIds)
+        .gte("scheduled_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
+        .order("scheduled_at", { ascending: true })
+        .limit(5);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: enrolledCourseIds.length > 0,
+  });
+
   if (authLoading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center text-muted-foreground">Loading...</div></Layout>;
   }
