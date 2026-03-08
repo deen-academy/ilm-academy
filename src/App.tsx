@@ -17,6 +17,12 @@ import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateCourse from "./pages/CreateCourse";
 import UploadLesson from "./pages/UploadLesson";
+import AdminStudents from "./pages/admin/Students";
+import AdminTeachers from "./pages/admin/Teachers";
+import AdminCourses from "./pages/admin/Courses";
+import AdminResources from "./pages/admin/Resources";
+import AdminLiveClasses from "./pages/admin/LiveClasses";
+import AdminAnalytics from "./pages/admin/Analytics";
 import AdminRoute from "@/components/AdminRoute";
 
 const queryClient = new QueryClient();
@@ -39,6 +45,12 @@ const App = () => (
             <Route path="/quiz/:id" element={<QuizPage />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+            <Route path="/admin/students" element={<AdminRoute><AdminStudents /></AdminRoute>} />
+            <Route path="/admin/teachers" element={<AdminRoute><AdminTeachers /></AdminRoute>} />
+            <Route path="/admin/courses" element={<AdminRoute><AdminCourses /></AdminRoute>} />
+            <Route path="/admin/resources" element={<AdminRoute><AdminResources /></AdminRoute>} />
+            <Route path="/admin/live-classes" element={<AdminRoute><AdminLiveClasses /></AdminRoute>} />
+            <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
             <Route path="/admin/create-course" element={<AdminRoute><CreateCourse /></AdminRoute>} />
             <Route path="/admin/upload-lesson" element={<AdminRoute><UploadLesson /></AdminRoute>} />
             <Route path="*" element={<NotFound />} />
