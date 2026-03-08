@@ -138,8 +138,8 @@ const QuizPage = () => {
                     const label = optionLabels[oi];
                     const displayLabel = displayLabels[oi];
                     const selected = answers[q.id] === label;
-                    const isCorrect = submitted && result?.correct_answer === label;
-                    const isWrong = submitted && selected && result?.correct_answer !== label;
+                    const isCorrect = submitted && selected && result?.correct;
+                    const isWrong = submitted && selected && !result?.correct;
                     return (
                       <button
                         key={key}
