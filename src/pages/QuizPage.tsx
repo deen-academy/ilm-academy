@@ -63,6 +63,14 @@ const QuizPage = () => {
     gradeMutation.mutate();
   };
 
+  const handleRetry = () => {
+    setAnswers({});
+    setSubmitted(false);
+    setScore(0);
+    setTotalQuestions(0);
+    setGradeResults({});
+  };
+
   if (isLoading) {
     return (
       <Layout showFooter={false}>
