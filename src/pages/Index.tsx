@@ -1,23 +1,11 @@
 import Layout from "@/components/Layout";
 import CourseCard from "@/components/CourseCard";
 import { Button } from "@/components/ui/button";
+import { seedCourses } from "@/data/courses";
 import { Link } from "react-router-dom";
 import { BookOpen, GraduationCap, Star, Users } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 
 const Landing = () => {
-  const { data: courses = [] } = useQuery({
-    queryKey: ["courses"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("courses")
-        .select("*, modules(id)");
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
   return (
     <Layout>
       {/* Hero */}
@@ -47,6 +35,7 @@ const Landing = () => {
             </div>
           </div>
         </div>
+        {/* Decorative */}
         <div className="absolute -bottom-1 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent" />
       </section>
 
@@ -54,9 +43,9 @@ const Landing = () => {
       <section className="border-b bg-card">
         <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-8 md:grid-cols-4">
           {[
-            { icon: BookOpen, label: "Courses", value: `${courses.length}+` },
+            { icon: BookOpen, label: "Courses", value: "3+" },
             { icon: Users, label: "Students", value: "700+" },
-            { icon: GraduationCap, label: "Lessons", value: "21+" },
+            { icon: GraduationCap, label: "Lessons", value: "24+" },
             { icon: Star, label: "Rating", value: "4.9" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
@@ -76,14 +65,15 @@ const Landing = () => {
             <p className="text-muted-foreground">Start with our most popular courses designed for all levels</p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course) => (
+            {seedCourses.map((course) => (
               <CourseCard
                 key={course.id}
                 id={course.id}
                 title={course.title}
-                description={course.description || ""}
-                modules={(course.modules as any[])?.length || 0}
-                category={course.category || undefined}
+                description={course.description}
+                modules={course.modules.length}
+                students={course.students}
+                category={course.category}
               />
             ))}
           </div>
