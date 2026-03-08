@@ -21,7 +21,7 @@ const QuizPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("quizzes")
-        .select("*, quiz_questions(*)")
+        .select("*, quiz_questions(*), modules(id, title, course_id, courses(id, title))")
         .eq("id", id!)
         .single();
       if (error) throw error;
