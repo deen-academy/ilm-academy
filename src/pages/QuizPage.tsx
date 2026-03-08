@@ -194,6 +194,15 @@ const QuizPage = () => {
             <p className="mt-1 text-primary-foreground/80">
               {score === totalQuestions ? "MashaAllah! Perfect score!" : "Keep practising, you'll get there!"}
             </p>
+            <div className="mt-4 flex justify-center gap-3">
+              <Button variant="accent" onClick={handleRetry}>
+                Retry Quiz
+              </Button>
+              <Button variant="accent" asChild>
+                <Link to="/dashboard">Back to Dashboard</Link>
+              </Button>
+            </div>
+          </div>
             <Button variant="accent" className="mt-4" asChild>
               <Link to="/dashboard">Back to Dashboard</Link>
             </Button>
