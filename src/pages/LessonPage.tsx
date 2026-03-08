@@ -127,8 +127,8 @@ const LessonPage = () => {
           </Breadcrumb>
         </div>
 
-        <h1 className="mb-2 text-2xl font-bold text-foreground">{lesson.title}</h1>
-        <p className="mb-8 text-sm text-muted-foreground">{lesson.duration} • {lesson.type}</p>
+        <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">{lesson.title}</h1>
+        <p className="mb-6 sm:mb-8 text-sm text-muted-foreground">{lesson.duration} • {lesson.type}</p>
 
         {/* Video / Content placeholder */}
         <div className="mb-8 flex aspect-video items-center justify-center rounded-xl bg-muted">
