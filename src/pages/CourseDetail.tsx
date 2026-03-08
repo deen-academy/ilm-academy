@@ -69,6 +69,8 @@ const CourseDetail = () => {
     enabled: !!user && !!enrollment && allLessonIds.length > 0,
   });
 
+  const completedLessonIds = new Set(lessonProgress.map((p: any) => p.lesson_id));
+
   const enrollMutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
