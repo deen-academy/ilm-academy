@@ -20,7 +20,6 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  // For navigation requests, show offline page on failure
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -34,7 +33,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For other requests, network-first with cache fallback
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -43,5 +41,42 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(() => caches.match(event.request))
+  );
+});
+
+// Push notification handling
+self.addEventListener('push', (event) => {
+  let data = { title: 'Deen Academy', body: 'You have a new notification', url: '/' };
+
+  if (event.data) {
+    try {
+      data = { ...data, ...event.data.json() };
+    } catch {
+      data.body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: data.body,
+    icon: '/app-icon.png',
+    badge: '/app-icon.png',
+    vibrate: [100, 50, 100],
+    data: { url: data.url || '/' },
+    actions: [{ action: 'open', title: 'Open' }],
+  };
+
+  event.waitUntil(self.registration.showNotification(data.title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      for (const client of windowClients) {
+        if (client.url.includes(url) && 'focus' in client) return client.focus();
+      }
+      return clients.openWindow(url);
+    })
   );
 });

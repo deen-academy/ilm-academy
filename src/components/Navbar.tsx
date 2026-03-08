@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { BookOpen, Menu, X, User, LogOut } from "lucide-react";
+import { NotificationToggle } from "@/components/NotificationToggle";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -54,9 +55,10 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2 md:flex">
           {user ? (
             <>
+              <NotificationToggle />
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/profile" className="flex items-center gap-2">
                   <User className="h-4 w-4" />
