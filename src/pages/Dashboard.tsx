@@ -1,12 +1,13 @@
 import Layout from "@/components/Layout";
 import CourseCard from "@/components/CourseCard";
-import { Award, BookOpen, TrendingUp } from "lucide-react";
+import { Award, BookOpen, TrendingUp, Video, ExternalLink } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const Dashboard = () => {
   const { user, profile, loading: authLoading } = useAuth();
