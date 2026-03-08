@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateCourse from "./pages/CreateCourse";
 import UploadLesson from "./pages/UploadLesson";
+import AdminRoute from "@/components/AdminRoute";
 
 const queryClient = new QueryClient();
 
