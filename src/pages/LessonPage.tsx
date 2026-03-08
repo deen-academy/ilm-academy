@@ -96,7 +96,7 @@ const LessonPage = () => {
 
   return (
     <Layout showFooter={false}>
-      <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div className="container mx-auto max-w-4xl px-3 py-4 sm:px-4 sm:py-8">
         <div className="mb-6">
           <Breadcrumb>
             <BreadcrumbList>
