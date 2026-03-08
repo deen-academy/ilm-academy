@@ -69,6 +69,8 @@ const CourseDetail = () => {
     enabled: !!user && !!enrollment && allLessonIds.length > 0,
   });
 
+  const completedLessonIds = new Set(lessonProgress.map((p: any) => p.lesson_id));
+
   const enrollMutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
@@ -190,14 +192,19 @@ const CourseDetail = () => {
                 <ul className="divide-y">
                   {mod.lessons?.map((lesson: any) => {
                     const Icon = iconForType(lesson.type || "text");
+                    const isCompleted = completedLessonIds.has(lesson.id);
                     return (
                       <li key={lesson.id}>
                         <Link
                           to={`/lesson/${lesson.id}`}
                           className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-muted/50"
                         >
-                          <Icon className="h-4 w-4 text-primary" />
-                          <span className="flex-1 text-foreground">{lesson.title}</span>
+                          {isCompleted ? (
+                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <Icon className="h-4 w-4 text-primary" />
+                          )}
+                          <span className={`flex-1 ${isCompleted ? "text-muted-foreground line-through" : "text-foreground"}`}>{lesson.title}</span>
                           {lesson.duration && <span className="text-xs text-muted-foreground">{lesson.duration}</span>}
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         </Link>
