@@ -1,8 +1,9 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+import { CheckCircle2, XCircle } from "lucide-react";
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,7 +21,7 @@ const QuizPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("quizzes")
-        .select("*, quiz_questions(*)")
+        .select("*, quiz_questions(*), modules(id, title, course_id, courses(id, title))")
         .eq("id", id!)
         .single();
       if (error) throw error;
@@ -89,9 +90,35 @@ const QuizPage = () => {
   return (
     <Layout showFooter={false}>
       <div className="container mx-auto max-w-2xl px-4 py-10">
-        <button onClick={() => window.history.back()} className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-          <ArrowLeft className="h-4 w-4" /> Back
-        </button>
+        <div className="mb-6">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild><Link to="/courses">Courses</Link></BreadcrumbLink>
+              </BreadcrumbItem>
+              {(quiz as any).modules?.courses && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild><Link to={`/courses/${(quiz as any).modules.course_id}`}>{(quiz as any).modules.courses.title}</Link></BreadcrumbLink>
+                  </BreadcrumbItem>
+                </>
+              )}
+              {(quiz as any).modules?.title && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <span className="text-muted-foreground text-sm">{(quiz as any).modules.title}</span>
+                  </BreadcrumbItem>
+                </>
+              )}
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{quiz.title}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
         <h1 className="mb-2 text-2xl font-bold text-foreground">{quiz.title}</h1>
         <p className="mb-8 text-sm text-muted-foreground">Test your knowledge from this module</p>
 

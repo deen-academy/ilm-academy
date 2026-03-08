@@ -1,7 +1,8 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
-import { BookOpen, Clock, ChevronRight, Users, PlayCircle, FileText, Headphones, HelpCircle, ArrowLeft } from "lucide-react";
+import { BookOpen, Clock, ChevronRight, PlayCircle, FileText, Headphones, HelpCircle } from "lucide-react";
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -97,9 +98,17 @@ const CourseDetail = () => {
         <div className="container mx-auto px-4 py-12 md:py-16">
           <div className="mx-auto max-w-3xl">
             <div className="mb-6">
-              <Link to="/courses" className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-4 py-2 text-sm font-medium text-primary-foreground/90 hover:bg-primary-foreground/20 transition-colors backdrop-blur-sm">
-                <ArrowLeft className="h-4 w-4" /> Back to Courses
-              </Link>
+              <Breadcrumb>
+                <BreadcrumbList className="text-primary-foreground/70">
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild><Link to="/courses" className="text-primary-foreground/70 hover:text-primary-foreground">Courses</Link></BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="text-primary-foreground/50" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="text-primary-foreground">{course.title}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
             </div>
             <span className="mb-3 inline-block rounded-full bg-primary-foreground/20 px-3 py-1 text-xs font-medium text-primary-foreground">
               {course.category}

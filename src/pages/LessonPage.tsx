@@ -1,7 +1,8 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, PlayCircle } from "lucide-react";
+import { CheckCircle2, PlayCircle } from "lucide-react";
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -95,11 +96,35 @@ const LessonPage = () => {
   return (
     <Layout showFooter={false}>
       <div className="container mx-auto max-w-4xl px-4 py-8">
-        {courseId && (
-          <Link to={`/courses/${courseId}`} className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-            <ArrowLeft className="h-4 w-4" /> Back to {course?.title || "Course"}
-          </Link>
-        )}
+        <div className="mb-6">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild><Link to="/courses">Courses</Link></BreadcrumbLink>
+              </BreadcrumbItem>
+              {courseId && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild><Link to={`/courses/${courseId}`}>{course?.title || "Course"}</Link></BreadcrumbLink>
+                  </BreadcrumbItem>
+                </>
+              )}
+              {(lesson as any).modules?.title && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <span className="text-muted-foreground text-sm">{(lesson as any).modules.title}</span>
+                  </BreadcrumbItem>
+                </>
+              )}
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{lesson.title}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         <h1 className="mb-2 text-2xl font-bold text-foreground">{lesson.title}</h1>
         <p className="mb-8 text-sm text-muted-foreground">{lesson.duration} • {lesson.type}</p>
