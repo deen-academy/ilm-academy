@@ -1,7 +1,8 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useParams, Link } from "react-router-dom";
-import { BookOpen, Clock, ChevronRight, PlayCircle, FileText, Headphones, HelpCircle } from "lucide-react";
+import { BookOpen, Clock, ChevronRight, PlayCircle, FileText, Headphones, HelpCircle, CheckCircle2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +51,22 @@ const CourseDetail = () => {
       return data;
     },
     enabled: !!id && !!user,
+  });
+
+  const allLessonIds = course?.modules?.flatMap((m: any) => m.lessons?.map((l: any) => l.id) || []) || [];
+
+  const { data: lessonProgress = [] } = useQuery({
+    queryKey: ["course-progress", id, user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("lesson_progress")
+        .select("lesson_id, completed")
+        .eq("user_id", user!.id)
+        .in("lesson_id", allLessonIds)
+        .eq("completed", true);
+      return data || [];
+    },
+    enabled: !!user && !!enrollment && allLessonIds.length > 0,
   });
 
   const enrollMutation = useMutation({
@@ -119,6 +136,18 @@ const CourseDetail = () => {
               <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> {course.modules?.length || 0} modules</span>
               <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> {totalLessons} lessons</span>
             </div>
+            {user && enrollment && totalLessons > 0 && (
+              <div className="mt-6">
+                <div className="mb-2 flex items-center justify-between text-sm text-primary-foreground/80">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4" />
+                    {lessonProgress.length} of {totalLessons} lessons completed
+                  </span>
+                  <span className="font-semibold text-primary-foreground">{Math.round((lessonProgress.length / totalLessons) * 100)}%</span>
+                </div>
+                <Progress value={(lessonProgress.length / totalLessons) * 100} className="h-2.5 bg-primary-foreground/20 [&>div]:bg-primary-foreground" />
+              </div>
+            )}
             {user ? (
               enrollment ? (
                 <Button variant="accent" size="lg" className="mt-6" disabled>
