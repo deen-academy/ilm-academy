@@ -25,6 +25,7 @@ import AdminLiveClasses from "./pages/admin/LiveClasses";
 import AdminAnalytics from "./pages/admin/Analytics";
 import AdminRoute from "@/components/AdminRoute";
 import TeacherRoute from "@/components/TeacherRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import TeacherCourses from "./pages/teacher/TeacherCourses";
 import TeacherResources from "./pages/teacher/TeacherResources";
