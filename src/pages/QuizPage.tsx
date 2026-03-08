@@ -85,7 +85,8 @@ const QuizPage = () => {
   }
 
   const optionKeys = ["option_a", "option_b", "option_c", "option_d"] as const;
-  const optionLabels = ["A", "B", "C", "D"];
+  const optionLabels = ["a", "b", "c", "d"];
+  const displayLabels = ["A", "B", "C", "D"];
 
   return (
     <Layout showFooter={false}>
@@ -131,6 +132,7 @@ const QuizPage = () => {
               <div className="space-y-2">
                 {optionKeys.map((key, oi) => {
                   const label = optionLabels[oi];
+                  const displayLabel = displayLabels[oi];
                   const selected = answers[q.id] === label;
                   const isCorrect = submitted && label === q.correct_answer;
                   const isWrong = submitted && selected && label !== q.correct_answer;
@@ -145,7 +147,7 @@ const QuizPage = () => {
                         isWrong ? "border-destructive bg-destructive/5" : ""
                       } ${!selected && !isCorrect ? "hover:bg-muted/50" : ""}`}
                     >
-                      <span className="font-medium text-muted-foreground">{label}.</span>
+                      <span className="font-medium text-muted-foreground">{displayLabel}.</span>
                       <span className="flex-1">{q[key]}</span>
                       {isCorrect && <CheckCircle2 className="h-4 w-4 text-green-600" />}
                       {isWrong && <XCircle className="h-4 w-4 text-destructive" />}
