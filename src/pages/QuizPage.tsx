@@ -203,10 +203,6 @@ const QuizPage = () => {
               </Button>
             </div>
           </div>
-            <Button variant="accent" className="mt-4" asChild>
-              <Link to="/dashboard">Back to Dashboard</Link>
-            </Button>
-          </div>
         ) : null}
       </div>
     </Layout>
