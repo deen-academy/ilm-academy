@@ -147,7 +147,7 @@ const QuizPage = () => {
                         isWrong ? "border-destructive bg-destructive/5" : ""
                       } ${!selected && !isCorrect ? "hover:bg-muted/50" : ""}`}
                     >
-                      <span className="font-medium text-muted-foreground">{label}.</span>
+                      <span className="font-medium text-muted-foreground">{displayLabel}.</span>
                       <span className="flex-1">{q[key]}</span>
                       {isCorrect && <CheckCircle2 className="h-4 w-4 text-green-600" />}
                       {isWrong && <XCircle className="h-4 w-4 text-destructive" />}
