@@ -132,6 +132,7 @@ const QuizPage = () => {
               <div className="space-y-2">
                 {optionKeys.map((key, oi) => {
                   const label = optionLabels[oi];
+                  const displayLabel = displayLabels[oi];
                   const selected = answers[q.id] === label;
                   const isCorrect = submitted && label === q.correct_answer;
                   const isWrong = submitted && selected && label !== q.correct_answer;
