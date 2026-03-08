@@ -15,13 +15,15 @@ const QuizPage = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [gradeResults, setGradeResults] = useState<Record<string, { correct: boolean; correct_answer: string }>>({});
 
   const { data: quiz, isLoading } = useQuery({
     queryKey: ["quiz", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("quizzes")
-        .select("*, quiz_questions(*), modules(id, title, course_id, courses(id, title))")
+        .select("*, quiz_questions(id, question, option_a, option_b, option_c, option_d, order_number), modules(id, title, course_id, courses(id, title))")
         .eq("id", id!)
         .single();
       if (error) throw error;
@@ -33,18 +35,24 @@ const QuizPage = () => {
     enabled: !!id,
   });
 
-  const saveResultMutation = useMutation({
-    mutationFn: async (finalScore: number) => {
-      if (!user) return;
-      const { error } = await supabase
-        .from("quiz_results")
-        .insert({
-          quiz_id: id!,
-          user_id: user.id,
-          score: finalScore,
-          total_questions: quiz?.quiz_questions?.length || 0,
-        });
+  const gradeMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.rpc("grade_quiz", {
+        _quiz_id: id!,
+        _answers: answers,
+      });
       if (error) throw error;
+      return data as { score: number; total: number; results: Array<{ question_id: string; correct: boolean; correct_answer: string }> };
+    },
+    onSuccess: (data) => {
+      setScore(data.score);
+      setTotalQuestions(data.total);
+      const resultsMap: Record<string, { correct: boolean; correct_answer: string }> = {};
+      data.results.forEach((r) => {
+        resultsMap[r.question_id] = { correct: r.correct, correct_answer: r.correct_answer };
+      });
+      setGradeResults(resultsMap);
+      setSubmitted(true);
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -52,13 +60,7 @@ const QuizPage = () => {
   const questions = quiz?.quiz_questions || [];
 
   const handleSubmit = () => {
-    let correct = 0;
-    questions.forEach((q: any) => {
-      if (answers[q.id] === q.correct_answer) correct++;
-    });
-    setScore(correct);
-    setSubmitted(true);
-    saveResultMutation.mutate(correct);
+    gradeMutation.mutate();
   };
 
   if (isLoading) {
@@ -124,39 +126,42 @@ const QuizPage = () => {
         <p className="mb-8 text-sm text-muted-foreground">Test your knowledge from this module</p>
 
         <div className="space-y-6">
-          {questions.map((q: any, qi: number) => (
-            <div key={q.id} className="rounded-xl border bg-card p-5 shadow-card">
-              <p className="mb-3 font-medium text-foreground">
-                {qi + 1}. {q.question}
-              </p>
-              <div className="space-y-2">
-                {optionKeys.map((key, oi) => {
-                  const label = optionLabels[oi];
-                  const displayLabel = displayLabels[oi];
-                  const selected = answers[q.id] === label;
-                  const isCorrect = submitted && label === q.correct_answer;
-                  const isWrong = submitted && selected && label !== q.correct_answer;
-                  return (
-                    <button
-                      key={key}
-                      disabled={submitted}
-                      onClick={() => setAnswers({ ...answers, [q.id]: label })}
-                      className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors text-left ${
-                        selected && !submitted ? "border-primary bg-primary/5" : ""
-                      } ${isCorrect ? "border-green-500 bg-green-50" : ""} ${
-                        isWrong ? "border-destructive bg-destructive/5" : ""
-                      } ${!selected && !isCorrect ? "hover:bg-muted/50" : ""}`}
-                    >
-                      <span className="font-medium text-muted-foreground">{displayLabel}.</span>
-                      <span className="flex-1">{q[key]}</span>
-                      {isCorrect && <CheckCircle2 className="h-4 w-4 text-green-600" />}
-                      {isWrong && <XCircle className="h-4 w-4 text-destructive" />}
-                    </button>
-                  );
-                })}
+          {questions.map((q: any, qi: number) => {
+            const result = gradeResults[q.id];
+            return (
+              <div key={q.id} className="rounded-xl border bg-card p-5 shadow-card">
+                <p className="mb-3 font-medium text-foreground">
+                  {qi + 1}. {q.question}
+                </p>
+                <div className="space-y-2">
+                  {optionKeys.map((key, oi) => {
+                    const label = optionLabels[oi];
+                    const displayLabel = displayLabels[oi];
+                    const selected = answers[q.id] === label;
+                    const isCorrect = submitted && result?.correct_answer === label;
+                    const isWrong = submitted && selected && result?.correct_answer !== label;
+                    return (
+                      <button
+                        key={key}
+                        disabled={submitted}
+                        onClick={() => setAnswers({ ...answers, [q.id]: label })}
+                        className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-colors text-left ${
+                          selected && !submitted ? "border-primary bg-primary/5" : ""
+                        } ${isCorrect ? "border-green-500 bg-green-50" : ""} ${
+                          isWrong ? "border-destructive bg-destructive/5" : ""
+                        } ${!selected && !isCorrect ? "hover:bg-muted/50" : ""}`}
+                      >
+                        <span className="font-medium text-muted-foreground">{displayLabel}.</span>
+                        <span className="flex-1">{q[key]}</span>
+                        {isCorrect && <CheckCircle2 className="h-4 w-4 text-green-600" />}
+                        {isWrong && <XCircle className="h-4 w-4 text-destructive" />}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {questions.length === 0 && (
@@ -168,18 +173,18 @@ const QuizPage = () => {
             variant="hero"
             size="lg"
             className="mt-8 w-full"
-            disabled={Object.keys(answers).length < questions.length}
+            disabled={Object.keys(answers).length < questions.length || gradeMutation.isPending}
             onClick={handleSubmit}
           >
-            Submit Answers
+            {gradeMutation.isPending ? "Grading..." : "Submit Answers"}
           </Button>
         ) : submitted ? (
           <div className="mt-8 rounded-xl gradient-primary p-6 text-center">
             <p className="text-2xl font-bold text-primary-foreground">
-              {score} / {questions.length}
+              {score} / {totalQuestions}
             </p>
             <p className="mt-1 text-primary-foreground/80">
-              {score === questions.length ? "MashaAllah! Perfect score!" : "Keep practising, you'll get there!"}
+              {score === totalQuestions ? "MashaAllah! Perfect score!" : "Keep practising, you'll get there!"}
             </p>
             <Button variant="accent" className="mt-4" asChild>
               <Link to="/dashboard">Back to Dashboard</Link>
