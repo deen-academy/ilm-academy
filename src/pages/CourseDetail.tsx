@@ -83,6 +83,21 @@ const CourseDetail = () => {
     enabled: !!id,
   });
 
+  const { data: liveClasses = [] } = useQuery({
+    queryKey: ["course-live-classes", id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("live_classes")
+        .select("*")
+        .eq("course_id", id!)
+        .gte("scheduled_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
+        .order("scheduled_at", { ascending: true })
+        .limit(5);
+      return data || [];
+    },
+    enabled: !!id,
+  });
+
   const completedLessonIds = new Set(lessonProgress.map((p: any) => p.lesson_id));
 
   const enrollMutation = useMutation({
