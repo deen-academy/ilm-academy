@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { BookOpen, Menu, X, User, LogOut } from "lucide-react";
+import { NotificationToggle } from "@/components/NotificationToggle";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
