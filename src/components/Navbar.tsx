@@ -18,7 +18,8 @@ const Navbar = () => {
     { label: "Home", path: "/" },
     { label: "Courses", path: "/courses" },
     ...(user ? [{ label: "Dashboard", path: "/dashboard" }] : []),
-    ...((isAdmin || isTeacher) ? [{ label: "Admin", path: "/admin" }] : []),
+    ...(isTeacher ? [{ label: "Teacher", path: "/teacher" }] : []),
+    ...(isAdmin ? [{ label: "Admin", path: "/admin" }] : []),
   ];
 
   const handleSignOut = async () => {
