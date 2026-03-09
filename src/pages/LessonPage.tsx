@@ -130,12 +130,31 @@ const LessonPage = () => {
         <h1 className="mb-2 text-xl sm:text-2xl font-bold text-foreground">{lesson.title}</h1>
         <p className="mb-6 sm:mb-8 text-sm text-muted-foreground">{lesson.duration} • {lesson.type}</p>
 
-        {/* Video / Content placeholder */}
-        <div className="mb-8 flex aspect-video items-center justify-center rounded-xl bg-muted">
-          <div className="text-center">
-            <PlayCircle className="mx-auto mb-2 h-16 w-16 text-primary/30" />
-            <p className="text-sm text-muted-foreground">Lesson content will appear here</p>
-          </div>
+        {/* Video / Audio / Content */}
+        <div className="mb-8 rounded-xl overflow-hidden">
+          {lesson.video_url ? (
+            <video
+              controls
+              className="w-full aspect-video rounded-xl bg-black"
+              src={lesson.video_url}
+            >
+              Your browser does not support the video tag.
+            </video>
+          ) : lesson.audio_url ? (
+            <div className="flex flex-col items-center justify-center rounded-xl bg-muted p-8">
+              <PlayCircle className="mb-4 h-16 w-16 text-primary/30" />
+              <audio controls className="w-full max-w-md" src={lesson.audio_url}>
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          ) : (
+            <div className="flex aspect-video items-center justify-center rounded-xl bg-muted">
+              <div className="text-center">
+                <PlayCircle className="mx-auto mb-2 h-16 w-16 text-primary/30" />
+                <p className="text-sm text-muted-foreground">No media uploaded yet</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Arabic text example */}
