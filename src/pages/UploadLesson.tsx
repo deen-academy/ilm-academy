@@ -129,6 +129,7 @@ const UploadLesson = () => {
       }
     },
     onSuccess: () => {
+      setUploading(false);
       queryClient.invalidateQueries({ queryKey: ["lessons"] });
       queryClient.invalidateQueries({ queryKey: ["course"] });
       toast.success(lessonId ? "Lesson updated!" : "Lesson created!");

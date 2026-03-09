@@ -115,7 +115,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, profile, roles, signUp, signIn, signOut }}>
+  const refreshProfile = useCallback(async () => {
+    if (user) await fetchUserData(user.id);
+  }, [user, fetchUserData]);
+
+    <AuthContext.Provider value={{ user, session, loading, profile, roles, signUp, signIn, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
