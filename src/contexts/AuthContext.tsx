@@ -12,6 +12,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -113,8 +114,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     toast.success("Logged out");
   };
 
+  const refreshProfile = useCallback(async () => {
+    if (user) await fetchUserData(user.id);
+  }, [user, fetchUserData]);
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, profile, roles, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, profile, roles, signUp, signIn, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

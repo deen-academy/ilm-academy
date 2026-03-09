@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 const Profile = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -38,8 +38,12 @@ const Profile = () => {
     if (!user) return;
     setSaving(true);
     const { error } = await supabase.from("profiles").update({ name }).eq("id", user.id);
-    if (error) toast.error(error.message);
-    else toast.success("Profile updated!");
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Profile updated!");
+      await refreshProfile();
+    }
     setSaving(false);
   };
 
