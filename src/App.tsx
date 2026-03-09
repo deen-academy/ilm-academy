@@ -63,6 +63,7 @@ const App = () => (
             <Route path="/teacher/courses" element={<TeacherRoute><TeacherCourses /></TeacherRoute>} />
             <Route path="/teacher/resources" element={<TeacherRoute><TeacherResources /></TeacherRoute>} />
             <Route path="/teacher/live-classes" element={<TeacherRoute><TeacherLiveClasses /></TeacherRoute>} />
+            <Route path="/teacher/upload-lesson" element={<TeacherRoute><UploadLesson /></TeacherRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
