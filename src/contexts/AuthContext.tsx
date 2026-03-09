@@ -114,11 +114,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     toast.success("Logged out");
   };
 
-  return (
   const refreshProfile = useCallback(async () => {
     if (user) await fetchUserData(user.id);
   }, [user, fetchUserData]);
 
+  return (
     <AuthContext.Provider value={{ user, session, loading, profile, roles, signUp, signIn, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
