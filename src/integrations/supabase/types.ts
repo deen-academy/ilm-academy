@@ -161,6 +161,7 @@ export type Database = {
           duration_minutes: number | null
           id: string
           meeting_url: string | null
+          reminder_sent: boolean
           scheduled_at: string
           title: string
         }
@@ -172,6 +173,7 @@ export type Database = {
           duration_minutes?: number | null
           id?: string
           meeting_url?: string | null
+          reminder_sent?: boolean
           scheduled_at: string
           title: string
         }
@@ -183,6 +185,7 @@ export type Database = {
           duration_minutes?: number | null
           id?: string
           meeting_url?: string | null
+          reminder_sent?: boolean
           scheduled_at?: string
           title?: string
         }
