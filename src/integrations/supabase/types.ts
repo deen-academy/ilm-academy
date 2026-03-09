@@ -498,6 +498,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      send_upcoming_live_class_reminders: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "student" | "teacher" | "admin"
