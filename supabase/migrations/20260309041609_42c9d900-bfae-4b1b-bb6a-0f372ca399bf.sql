@@ -20,8 +20,7 @@ begin
     select net.http_post(
       url := 'https://vafdtneevznngwblirpl.supabase.co/functions/v1/send-push-notification',
       headers := jsonb_build_object(
-        'Content-Type', 'application/json',
-        'Authorization', 'Bearer ' || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhZmR0bmVldnpubmd3YmxpcnBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NDg2NTUsImV4cCI6MjA4ODUyNDY1NX0.J9fPb-1oph8DuX-Dgk30e7fZ4Xyc2UvQAWTrL4QynJg'
+        'Content-Type', 'application/json'
       ),
       body := jsonb_build_object(
         'title', 'New Lesson Added!',
@@ -48,8 +47,7 @@ begin
   select net.http_post(
     url := 'https://vafdtneevznngwblirpl.supabase.co/functions/v1/send-push-notification',
     headers := jsonb_build_object(
-      'Content-Type', 'application/json',
-      'Authorization', 'Bearer ' || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhZmR0bmVldnpubmd3YmxpcnBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NDg2NTUsImV4cCI6MjA4ODUyNDY1NX0.J9fPb-1oph8DuX-Dgk30e7fZ4Xyc2UvQAWTrL4QynJg'
+      'Content-Type', 'application/json'
     ),
     body := jsonb_build_object(
       'title', 'Live Class Scheduled!',

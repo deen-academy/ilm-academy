@@ -1,73 +1,147 @@
-# Welcome to your Lovable project
+# 🕌 ILM Academy — Islamic Learning Platform
 
-## Project info
+A scalable, modern Islamic education platform designed to teach Deen from Maktab level to advanced studies.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## 🚀 Overview
 
-There are several ways of editing your application.
+ILM Academy is a full-stack learning platform built to deliver structured Islamic education including:
 
-**Use Lovable**
+* Qur'an reading
+* Tajweed
+* Arabic basics
+* Aqeedah
+* Fiqh
+* Hadith
+* Seerah
+* Islamic lifestyle & manners
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🧱 Tech Stack
 
-**Use your preferred IDE**
+### Frontend
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+* React (Vite-based setup)
+* TypeScript
+* Tailwind CSS
+* shadcn/ui
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Backend
 
-Follow these steps:
+* Supabase (PostgreSQL + Auth + RLS)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Hosting & Deployment
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+* Vercel
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Other Tools
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+* GitHub (version control)
+
+---
+
+## 🔐 Security
+
+* Row Level Security (RLS) enabled on all tables
+* Environment variables used for all secrets
+* No API keys stored in repository
+* Service role keys restricted to backend functions
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+ ├── components/
+ ├── pages/
+ ├── integrations/
+ │    └── supabase/
+ ├── modules/
+ ├── features/
+ └── utils/
+
+supabase/
+ ├── functions/
+ └── migrations/
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## ⚙️ Environment Variables
 
-**Use GitHub Codespaces**
+Create environment variables in your deployment platform:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+```
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 🧠 Core Features
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### 👨‍🎓 Student
 
-## How can I deploy this project?
+* Enroll in courses
+* Track progress
+* Complete lessons
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### 👨‍🏫 Teacher
 
-## Can I connect a custom domain to my Lovable project?
+* Create courses
+* Manage modules & lessons
 
-Yes, you can!
+### 🛡️ Admin
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+* Full system control
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
+
+## 🔄 Deployment
+
+1. Push code to GitHub
+2. Connect repository to Vercel
+3. Add environment variables
+4. Deploy
+
+---
+
+## 🔐 Backend Functions
+
+Supabase Edge Functions are used for:
+
+* Push notifications
+* Secure backend operations
+
+---
+
+## 📈 Future Improvements
+
+* Quiz system
+* Certificates
+* Payments & subscriptions
+* Mobile app
+* AI-powered learning assistant
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome. For major changes, please open an issue first.
+
+---
+
+## 📜 License
+
+This project is private and proprietary.
+
+---
+
+## 🧭 Vision
+
+To build a global platform for authentic Islamic knowledge, accessible to everyone.
+
+---
