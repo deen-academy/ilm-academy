@@ -8,6 +8,10 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // Dev-only: v0/Vercel sandbox preview hosts rotate per-session (e.g. sb-xxxx.vercel.run),
+    // so allow the .vercel.run suffix instead of a single hostname. `server` options never
+    // apply to production builds, so this does not weaken production host validation.
+    allowedHosts: [".vercel.run"],
     hmr: {
       overlay: false,
     },
