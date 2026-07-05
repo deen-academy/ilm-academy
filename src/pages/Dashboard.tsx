@@ -1,5 +1,6 @@
 import Layout from "@/components/Layout";
 import CourseCard from "@/components/CourseCard";
+import GamificationCard from "@/components/GamificationCard";
 import { Award, BookOpen, TrendingUp, Video, ExternalLink } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/contexts/AuthContext";
@@ -112,6 +113,11 @@ const Dashboard = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">Assalamu Alaikum, {profile?.name || "Student"} 👋</h1>
           <p className="mt-1 text-muted-foreground">Continue your learning journey</p>
+        </div>
+
+        {/* XP / Level / Streak (server-computed) */}
+        <div className="mb-6">
+          <GamificationCard />
         </div>
 
         {/* Stats row */}

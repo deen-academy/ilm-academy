@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 const QuizPage = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
@@ -53,6 +54,9 @@ const QuizPage = () => {
       });
       setGradeResults(resultsMap);
       setSubmitted(true);
+      // Grading awards XP / streak credit server-side; refresh the read model.
+      queryClient.invalidateQueries({ queryKey: ["my-gamification"] });
+      queryClient.invalidateQueries({ queryKey: ["my-quiz-results"] });
     },
     onError: (err: any) => toast.error(err.message),
   });

@@ -63,6 +63,8 @@ const LessonPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lesson-progress", id] });
       queryClient.invalidateQueries({ queryKey: ["course-progress"] });
+      // XP/streak state changes server-side when a lesson is completed.
+      queryClient.invalidateQueries({ queryKey: ["my-gamification"] });
       toast.success(completed ? "Marked as incomplete" : "Lesson completed! 🎉");
     },
     onError: (err: any) => toast.error(err.message),
